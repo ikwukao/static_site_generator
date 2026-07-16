@@ -1,10 +1,11 @@
 from pathlib import Path
 
 from copystatic import copy_static
-from generate_page import generate_page
+from generate_page import generate_pages_recursive
 
 
 def main():
+
     root = Path(__file__).resolve().parent.parent
 
     copy_static(
@@ -12,10 +13,10 @@ def main():
         root / "public",
     )
 
-    generate_page(
-        root / "content" / "index.md",
+    generate_pages_recursive(
+        root / "content",
         root / "template.html",
-        root / "public" / "index.html",
+        root / "public",
     )
 
 
