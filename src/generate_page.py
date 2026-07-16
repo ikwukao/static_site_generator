@@ -16,7 +16,12 @@ def extract_title(markdown: str) -> str:
     raise ValueError("No H1 heading found.")
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(
+    from_path,
+    template_path,
+    dest_path,
+    basepath="/",
+):
     """
     Generate a single HTML page from a Markdown file.
     """
@@ -45,6 +50,9 @@ def generate_page(from_path, template_path, dest_path):
         html,
     )
 
+    page = page.replace('href="/', f'href="{basepath}')
+    page = page.replace('src="/', f'src="{basepath}')
+
     destination = Path(dest_path)
 
     destination.parent.mkdir(
@@ -62,7 +70,8 @@ def generate_pages_recursive(
     dir_path_content,
     template_path,
     dest_dir_path,
-):
+    basepath="/",
+):    
     """
     Recursively generate HTML pages for every Markdown
     file inside the content directory.
@@ -77,11 +86,11 @@ def generate_pages_recursive(
         if item.is_dir():
 
             generate_pages_recursive(
-                item,
-                template_path,
-                output_dir / item.name,
+                    item,
+                    template_path,
+                    output_dir / item.name,
+                    basepath,
             )
-
         elif item.suffix == ".md":
 
             destination = (
@@ -93,4 +102,5 @@ def generate_pages_recursive(
                 item,
                 template_path,
                 destination,
+                basepath,
             )
