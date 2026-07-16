@@ -156,5 +156,91 @@ class TestMarkdownExtraction(unittest.TestCase):
         )
 
 
+def test_split_images(self):
+    node = TextNode(
+        "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+        TextType.TEXT,
+    )
+
+    self.assertListEqual(
+        [
+            TextNode("This is text with an ", TextType.TEXT),
+            TextNode(
+                "image",
+                TextType.IMAGE,
+                "https://i.imgur.com/zjjcJKZ.png",
+            ),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode(
+                "second image",
+                TextType.IMAGE,
+                "https://i.imgur.com/3elNhQu.png",
+            ),
+        ],
+        split_nodes_image([node]),
+    )
+
+
+def test_split_links(self):
+    node = TextNode(
+        "This is text with a [link](https://boot.dev) and another [Google](https://google.com)",
+        TextType.TEXT,
+    )
+
+    self.assertListEqual(
+        [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode(
+                "link",
+                TextType.LINK,
+                "https://boot.dev",
+            ),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode(
+                "Google",
+                TextType.LINK,
+                "https://google.com",
+            ),
+        ],
+        split_nodes_link([node]),
+    )
+
+
+def test_split_image_no_images(self):
+    node = TextNode(
+        "Plain text only",
+        TextType.TEXT,
+    )
+
+    self.assertListEqual(
+        [node],
+        split_nodes_image([node]),
+    )
+
+
+def test_split_link_no_links(self):
+    node = TextNode(
+        "Plain text only",
+        TextType.TEXT,
+    )
+
+    self.assertListEqual(
+        [node],
+        split_nodes_link([node]),
+    )
+
+
+def test_split_non_text_node(self):
+    node = TextNode(
+        "Already bold",
+        TextType.BOLD,
+    )
+
+    self.assertListEqual(
+        [node],
+        split_nodes_link([node]),
+    )
+
+
 if __name__ == "__main__":
     unittest.main()
