@@ -4,6 +4,7 @@ from inline_markdown import (
         split_nodes_delimiter,
         extract_markdown_images,
         extract_markdown_links,
+        text_to_textnodes,
 )
 
 from textnode import TextNode, TextType
@@ -239,6 +240,25 @@ def test_split_non_text_node(self):
     self.assertListEqual(
         [node],
         split_nodes_link([node]),
+    )
+
+
+def test_text_to_textnodes(self):
+    nodes = text_to_textnodes(
+        "This is **bold** text with _italic_ and `code`."
+    )
+
+    self.assertEqual(
+        nodes,
+        [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text with ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode(".", TextType.TEXT),
+        ],
     )
 
 
