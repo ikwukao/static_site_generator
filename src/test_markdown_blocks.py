@@ -1,6 +1,10 @@
 import unittest
 
-from markdown_blocks import markdown_to_blocks
+from markdown_blocks import (
+        BlockType,
+        block_to_block_type,
+        markdown_to_blocks,
+)
 
 
 class TestMarkdownBlocks(unittest.TestCase):
@@ -61,6 +65,78 @@ Third block
         self.assertEqual(
             markdown_to_blocks(""),
             [],
+        )
+
+
+class TestBlockTypes(unittest.TestCase):
+    def test_heading(self):
+        self.assertEqual(
+            block_to_block_type("# Heading"),
+            BlockType.HEADING,
+        )
+
+    def test_heading_level_six(self):
+        self.assertEqual(
+            block_to_block_type("###### Small Heading"),
+            BlockType.HEADING,
+        )
+
+    def test_code_block(self):
+        block = """```
+print("Hello")
+```"""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.CODE,
+        )
+
+    def test_quote_block(self):
+        block = """>One
+>Two
+>Three"""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.QUOTE,
+        )
+
+    def test_unordered_list(self):
+        block = """- One
+- Two
+- Three"""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.UNORDERED_LIST,
+        )
+
+    def test_ordered_list(self):
+        block = """1. One
+2. Two
+3. Three"""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.ORDERED_LIST,
+        )
+
+    def test_paragraph(self):
+        block = """This is a paragraph.
+It spans multiple lines."""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.PARAGRAPH,
+        )
+
+    def test_invalid_ordered_list(self):
+        block = """1. One
+3. Three"""
+
+        self.assertEqual(
+            block_to_block_type(block),
+            BlockType.PARAGRAPH,
         )
 
 
